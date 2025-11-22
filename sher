@@ -1,0 +1,26 @@
+// sheerid-bypass.js
+const fetch = require('node-fetch'); // Pastikan node-fetch sudah diinstall
+
+function modifyCountryParam(url) {
+    const urlObj = new URL(url);
+    if (urlObj.searchParams.has('country')) {
+        urlObj.searchParams.set('country', 'CN');
+    }
+    return urlObj.toString();
+}
+
+async function customFetch(url, options) {
+    if (url.includes("orgsearch.sheerid.net/rest/organization/search")) {
+        url = modifyCountryParam(url);
+        console.log("URL modified to:", url);
+    }
+    return fetch(url, options);
+}
+
+// Contoh penggunaan
+(async () => {
+    const url = 'https://orgsearch.sheerid.net/rest/organization/search?country=US&keyword=test';
+    const response = await customFetch(url);
+    const data = await response.text(); // Bisa diganti jadi .json() sesuai kebutuhan API
+    console.log(data);
+})();
